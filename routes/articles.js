@@ -7,6 +7,13 @@ router.get('/new', (req, res)=>{
     res.render('articles/new', {article: new Article()})
 })
 
+router.get('/dashboard', async(req, res)=> {
+    const articles = await Article.find().sort({
+        createdAt: "desc"
+    });
+    res.render('articles/dashboard', {articles: articles})
+})
+
 // Obtenemos el Articulo a editar
 router.get('/edit/:id', async(req, res)=>{
     const article = await Article.findById(req.params.id)
@@ -21,7 +28,7 @@ router.get('/:slug', async(req, res)=>{
 })
 
 // Crear Nuevo Articulo
-router.post('/', async(req, res, next)=>{
+router.post('/dashboard', async(req, res, next)=>{
     req.article = new Article()
     next()
 },saveArticleAndRedirect('new'))

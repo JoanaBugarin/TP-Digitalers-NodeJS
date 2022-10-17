@@ -5,6 +5,7 @@ const Article = require('../models/article')
 const methodOverride = require('method-override')
 const app = express()
 const articleRouter = require('../routes/articles')
+const userRouter = require('../routes/users')
 const port = process.env.PORT || 3000
 
 
@@ -14,10 +15,11 @@ app.use(methodOverride('_method'))
 
 // Ruta Principal Home
 app.get('/', async(req, res)=>{
+    /*
     const articles = await Article.find().sort({
         createdAt: "desc"
-    });
-    res.render('articles/index', {articles: articles})
+    });*/
+    res.render('articles/index')
 })
 
 // MongoDB connection
@@ -26,6 +28,7 @@ mongoose
     .then(() => console.log('Conectado a MongoDB Atlas'))
     .catch((err) => console.error(err));
 
+app.use('/users', userRouter)
 app.use('/articles', articleRouter)
 
 // app.use('/public/', express.static('./public/'))
