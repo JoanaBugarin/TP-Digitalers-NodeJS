@@ -1,6 +1,7 @@
 const express = require('express')
 const Article = require('../models/article')
 const router = express.Router()
+const storage = require('node-sessionstorage')
 
 // Obtenemos Nuevo Articulo
 router.get('/new', (req, res)=>{
@@ -8,10 +9,13 @@ router.get('/new', (req, res)=>{
 })
 
 router.get('/dashboard', async(req, res)=> {
+    const username = storage.getItem('nickname')
+    console.log(storage.getItem('nickname'))
     const articles = await Article.find().sort({
         createdAt: "desc"
     });
-    res.render('articles/dashboard', {articles: articles})
+    res.render('articles/dashboard', {articles: articles, username: username})
+    
 })
 
 // Obtenemos el Articulo a editar

@@ -21,6 +21,8 @@
     "marked": "^4.1.1",
     "method-override": "^3.0.0",
     "mongoose": "^6.6.4",
+    "node-localstorage": "^2.2.1",
+    "node-sessionstorage": "^1.0.0",
     "slugify": "^1.6.5"
   }
 }

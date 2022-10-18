@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <%-include('_user_bar')%>
+    <%-include('_user_bar'); %>
     <div class="container">
         <!-- TITULO  -->
         <div class="text-center">
@@ -37,6 +37,7 @@
                     <blockquote class="blockquote">
                         <p class="card-text">
                             <%= article.markdown%>
+                            <%= username%>
                         </p>
                     </blockquote>
                     <figcaption class="blockquote-footer">
