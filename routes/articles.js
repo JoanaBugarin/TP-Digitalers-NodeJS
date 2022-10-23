@@ -9,12 +9,16 @@ router.get('/new', (req, res)=>{
 })
 
 router.get('/dashboard', async(req, res)=> {
-    const username = storage.getItem('nickname')
-    console.log(storage.getItem('nickname'))
-    const articles = await Article.find().sort({
-        createdAt: "desc"
-    });
-    res.render('articles/dashboard', {articles: articles, username: username})
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const articles = await Article.find().sort({
+            createdAt: "desc"
+        });
+        res.render('articles/dashboard', {articles: articles, username: username})
+    } else {
+        res.redirect('/')
+    }
     
 })
 
