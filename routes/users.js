@@ -16,8 +16,9 @@ router.get('/login', (req, res)=>{
 
 //Iniciar sesión EN EDICIÓN
 router.post('/login', async(req, res, next)=>{
-    const user = await User.findOne({ nickname: req.user.nickname, password: req.user.password })
+    const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password })
     if(user == null)res.redirect('/articles/login')
+    saveSessionData(req.body.nickname)
     res.render('articles/dashboard', {user: user})
     console.log(user)
 
