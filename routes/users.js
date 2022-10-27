@@ -17,17 +17,21 @@ router.get('/login', (req, res)=>{
 //Iniciar sesión EN EDICIÓN
 router.post('/login', async(req, res, next)=>{
     const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password })
-    if(user == null)res.redirect('/articles/login')
-    saveSessionData(req.body.nickname)
-    res.render('articles/dashboard', {user: user})
-    console.log(user)
+    if(user == null) {
+        res.redirect('/articles/login')
+    } else {
+        user.nickname = req.body.nickname
+        user.password = req.body.password
+        saveSessionData(user.nickname)
+        res.redirect(`/articles/dashboard`)
+        
+    }
 
 })
 
 //Desconectarse
 router.get('/logout', (req, res)=>{
     storage.setItem('hasSession', 'false')
-    console.log(storage.getItem('hasSession'))
     res.redirect('/')
 })
 
@@ -55,9 +59,7 @@ function saveUserAndRedirect(path){
 
 function saveSessionData(nickname) {
     storage.setItem('nickname', nickname);
-    console.log(storage.getItem('nickname'))
-    storage.setItem('hasSession', 'true')
-    console.log(storage.getItem('hasSession'))
+    storage.setItem('hasSession', 'true');
 }
 
 
