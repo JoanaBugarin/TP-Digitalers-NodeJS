@@ -18,7 +18,21 @@ router.get('/login', (req, res)=>{
 router.post('/login', async(req, res, next)=>{
     const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password })
     if(user == null) {
-        res.redirect('/articles/login')
+        let alertPlaceholder = document.querySelector('#liveAlertPlaceholder');
+        let alertTrigger = document.querySelector('#liveAlertBtn');
+
+        function alert(message, type) {
+            let wrapper = document.createElement('div');
+            wrapper.innerHTML = '<div class="alert alert-' + type + 'alert-dismissible" role="alert">';
+            alertPlaceholder.append(wrapper);
+        }
+
+        if(alertTrigger) {
+            alertTrigger.addEventListener('click', function(){
+                alert('Algo anduvo mal, revisa los datos del formulario', 'danger');
+            })
+        }
+        
     } else {
         user.nickname = req.body.nickname
         user.password = req.body.password

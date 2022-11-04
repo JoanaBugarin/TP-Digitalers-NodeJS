@@ -46,6 +46,10 @@ const articleSchema = new mongoose.Schema(
         sanitizedhtml: {
             type: String,
             require: true
+        },
+        author: {
+            type: String,
+            require: true
         }
     },
     { versionKey: false }

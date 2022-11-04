@@ -5,7 +5,14 @@ const storage = require('node-sessionstorage')
 
 // Obtenemos Nuevo Articulo
 router.get('/new', (req, res)=>{
-    res.render('articles/new', {article: new Article()})
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        res.render('articles/new', {article: new Article(), username: username})
+    } else {
+        res.redirect('/')
+    }
+    
 })
 
 router.get('/dashboard', async(req, res)=> {
@@ -24,15 +31,27 @@ router.get('/dashboard', async(req, res)=> {
 
 // Obtenemos el Articulo a editar
 router.get('/edit/:id', async(req, res)=>{
-    const article = await Article.findById(req.params.id)
-    res.render('articles/edit', {article: article})
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const article = await Article.findById(req.params.id)
+        res.render('articles/edit', {article: article, username: username})
+    } else {
+        res.redirect('/')
+    }
 })
 
 // Obtener el Articulo x Slug
 router.get('/:slug', async(req, res)=>{
-    const article = await Article.findOne({slug: req.params.slug})
-    if(article== null)res.redirect('/')
-    res.render('articles/show', {article: article})
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const article = await Article.findOne({slug: req.params.slug})
+        if(article== null)res.redirect('/')
+        res.render('articles/show', {article: article, username: username})
+    } else {
+        res.redirect('/')
+    }
 })
 
 // Crear Nuevo Articulo
@@ -50,7 +69,7 @@ router.put('/:id', async(req, res, next)=>{
 // Eliminar Articulo x ID
 router.delete('/:id', async(req, res)=>{
     await Article.findByIdAndDelete(req.params.id)
-    res.redirect('/')
+    res.redirect('/articles/dashboard')
 })
 
 
@@ -61,6 +80,7 @@ function saveArticleAndRedirect(path){
         article.title = req.body.title
         article.description = req.body.description
         article.markdown = req.body.markdown
+        article.author = storage.getItem('nickname')
         try{
             article = await article.save()
             res.redirect(`/articles/${article.slug}`)

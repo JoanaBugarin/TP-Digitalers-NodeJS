@@ -10,8 +10,9 @@
 </head>
 <body>
     <div class="container">
+        <%-include('_logo'); %>
         <h1>Registro de Usuario Nuevo</h1>
-        <form action="/users" method="POST" >
+        <form class="mt-5" action="/users" method="POST" >
             <%-include('_form_users')%> 
         </form>
     </div>
