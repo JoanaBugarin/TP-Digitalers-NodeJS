@@ -25,6 +25,7 @@ router.post('/login', [
         .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i")
         .withMessage('La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula y un caracter especial.')], 
         async(req, res, next)=>{
+            const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password });
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 console.log(req.body);
@@ -32,7 +33,6 @@ router.post('/login', [
                 const validaciones = errors.array();
                 res.render('articles/login', {validaciones:validaciones, valores:valores});
             } 
-            const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password });
             if (user == null) {   
                 res.render('articles/login', {noMatch: 'Nickname y/o password incorrectos.'});
             } else {
