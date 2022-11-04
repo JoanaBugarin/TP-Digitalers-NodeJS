@@ -15,20 +15,6 @@
         <form class="mt-5" action="/users/login" method="POST" >
             <%-include('_form_users')%> 
         </form>
-        <% if(typeof noMatch != 'undefined') {%>          
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><%= noMatch %></strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <% } %>
-        <% if(typeof validaciones != 'undefined') { %>
-            <% validaciones.forEach((validacion) => { %> 
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><%= validacion.msg %> </strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <% }) %> 
-        <% } %> 
     </div>
 </body>
 </html>

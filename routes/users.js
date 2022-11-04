@@ -2,7 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const storage = require('node-sessionstorage')
 const router = express.Router()
-const { check, validationResult } = require('express-validator');
+//const hashmap = require('../tools/hashmap')
 
 //Obtenemos nuevo usuario
 router.get('/register', (req, res)=>{
@@ -15,26 +15,10 @@ router.get('/login', (req, res)=>{
 })
 
 //Iniciar sesión EN EDICIÓN
-router.post('/login', [
-        check('nickname')
-        .exists()
-        .isLength({min:2, max:20})
-        .withMessage('El nickname debe contener al menos dos caracteres y veinte como máximo.'),
-        check('password')
-        .exists()
-        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i")
-        .withMessage('La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula y un caracter especial.')], 
-        async(req, res, next)=>{
+router.post('/login', async(req, res, next)=>{
             const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password });
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                console.log(req.body);
-                const valores = req.body;
-                const validaciones = errors.array();
-                res.render('articles/login', {validaciones:validaciones, valores:valores});
-            } 
             if (user == null) {   
-                res.render('articles/login', {noMatch: 'Nickname y/o password incorrectos.'});
+                res.render('articles/login');
             } else {
                 user.nickname = req.body.nickname
                 user.password = req.body.password
