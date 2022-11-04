@@ -2,7 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const storage = require('node-sessionstorage')
 const router = express.Router()
-//const hashmap = require('../tools/hashmap')
+const { check, validationResult } = require('express-validator');
 
 //Obtenemos nuevo usuario
 router.get('/register', (req, res)=>{
@@ -15,33 +15,33 @@ router.get('/login', (req, res)=>{
 })
 
 //Iniciar sesión EN EDICIÓN
-router.post('/login', async(req, res, next)=>{
-    const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password })
-    if(user == null) {
-        let alertPlaceholder = document.querySelector('#liveAlertPlaceholder');
-        let alertTrigger = document.querySelector('#liveAlertBtn');
-
-        function alert(message, type) {
-            let wrapper = document.createElement('div');
-            wrapper.innerHTML = '<div class="alert alert-' + type + 'alert-dismissible" role="alert">';
-            alertPlaceholder.append(wrapper);
-        }
-
-        if(alertTrigger) {
-            alertTrigger.addEventListener('click', function(){
-                alert('Algo anduvo mal, revisa los datos del formulario', 'danger');
-            })
-        }
-        
-    } else {
-        user.nickname = req.body.nickname
-        user.password = req.body.password
-        saveSessionData(user.nickname)
-        res.redirect(`/articles/dashboard`)
-        
-    }
-
-})
+router.post('/login', [
+        check('nickname')
+        .exists()
+        .isLength({min:2, max:20})
+        .withMessage('El nickname debe contener al menos dos caracteres y veinte como máximo.'),
+        check('password')
+        .exists()
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i")
+        .withMessage('La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula y un caracter especial.')], 
+        async(req, res, next)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                console.log(req.body);
+                const valores = req.body;
+                const validaciones = errors.array();
+                res.render('articles/login', {validaciones:validaciones, valores:valores});
+            } 
+            const user = await User.findOne({ nickname: req.body.nickname, password: req.body.password });
+            if (user == null) {   
+                res.render('articles/login', {noMatch: 'Nickname y/o password incorrectos.'});
+            } else {
+                user.nickname = req.body.nickname
+                user.password = req.body.password
+                saveSessionData(user.nickname)
+                res.redirect(`/articles/dashboard`)
+            }
+        })
 
 //Desconectarse
 router.get('/logout', (req, res)=>{
