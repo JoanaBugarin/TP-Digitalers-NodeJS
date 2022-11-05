@@ -27,6 +27,16 @@ router.post('/login', async(req, res, next)=>{
             }
         })
 
+//Mostrar gustos del usuario
+router.get('/likes', async(req, res)=>{
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const user = await User.findOne({ nickname: username});
+        res.render('articles/likes', {user: user, username: username});
+    }
+})
+
 //Desconectarse
 router.get('/logout', (req, res)=>{
     storage.setItem('hasSession', 'false')

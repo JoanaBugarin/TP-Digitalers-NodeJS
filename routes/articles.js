@@ -82,13 +82,25 @@ router.post('/:id', async(req, res)=>{
         if(article == null)res.redirect('/')
         article.likes += 1;
         const user = await User.findOne({ nickname: username});
-        if (user.likes.indexOf(article) == -1) {
+        if (user.likes.length == 0) {
             user.likes.push(article)
             try {
-                user = await user.save();
+                user = user.save();
             } catch (e) {
                 console.log("Error al guardar el artículo en likes del usuario.")
             }
+        } else {
+            user.likes.forEach(like => {
+            if (like.title != article.title) {
+                user.likes.push(article)
+                console.log(user.likes)
+                try {
+                    user = user.save();
+                } catch (e) {
+                    console.log("Error al guardar el artículo en likes del usuario.")
+                }
+            }
+            })
         }
         try{
             article = await article.save()
