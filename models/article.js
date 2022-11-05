@@ -50,6 +50,10 @@ const articleSchema = new mongoose.Schema(
         author: {
             type: String,
             require: true
+        },
+        likes: {
+            type: Number,
+            default: 0
         }
     },
     { versionKey: false }

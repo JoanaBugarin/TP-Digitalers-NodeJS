@@ -72,6 +72,26 @@ router.delete('/:id', async(req, res)=>{
     res.redirect('/articles/dashboard')
 })
 
+router.post('/:id', async(req, res)=>{
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const article = await Article.findById(req.params.id)
+        if(article == null)res.redirect('/')
+        article.likes += 1;
+        console.log(article.likes)
+        try{
+            article = await article.save()
+            res.redirect(`/articles/${article.slug}`)
+        }catch (e){
+            const articles = await Article.find().sort({
+                createdAt: "desc"
+            });
+            res.render(`articles/dashboard`, {article: article, username:username, articles: articles})
+        }
+    }
+})
+
 
 // Guardar Articulo y redirecciono
 function saveArticleAndRedirect(path){

@@ -19,12 +19,15 @@
         <h1>
             <%= article.title %>
         </h1>
-        <h5>
+        <h4>
             <%= article.markdown %> 
-        </h5>
-        <div>
+        </h4>
+        <h5>
             <%= article.createdAt.toLocaleDateString() %> 
-        </div>
+        </h5>
+        <h6>
+            <%= article.likes %> <i class="bi bi-hand-thumbs-up-fill"></i>
+        </h6>
         <div>
             <%- article.description %> 
         </div>
