@@ -2,6 +2,7 @@ const express = require('express')
 const Article = require('../models/article')
 const router = express.Router()
 const storage = require('node-sessionstorage')
+const User = require('../models/user')
 
 // Obtenemos Nuevo Articulo
 router.get('/new', (req, res)=>{
@@ -72,6 +73,7 @@ router.delete('/:id', async(req, res)=>{
     res.redirect('/articles/dashboard')
 })
 
+//Like
 router.post('/:id', async(req, res)=>{
     const online = storage.getItem('hasSession')
     if (online === 'true') {
@@ -79,7 +81,15 @@ router.post('/:id', async(req, res)=>{
         const article = await Article.findById(req.params.id)
         if(article == null)res.redirect('/')
         article.likes += 1;
-        console.log(article.likes)
+        const user = await User.findOne({ nickname: username});
+        if (user.likes.indexOf(article) == -1) {
+            user.likes.push(article)
+            try {
+                user = await user.save();
+            } catch (e) {
+                console.log("Error al guardar el artículo en likes del usuario.")
+            }
+        }
         try{
             article = await article.save()
             res.redirect(`/articles/${article.slug}`)
