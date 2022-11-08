@@ -30,6 +30,36 @@ router.get('/dashboard', async(req, res)=> {
     
 })
 
+router.get('/newComment/:id', async(req, res)=>{
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        const article = await Article.findById(req.params.id)
+        res.render('articles/newComment', {article: article, username: username})
+    } else {
+        res.redirect('/')
+    }
+})
+
+router.post('/newComment/:id', async(req,res)=>{
+    const online = storage.getItem('hasSession')
+    if (online === 'true') {
+        const username = storage.getItem('nickname')
+        req.article = await Article.findById(req.params.id)
+        let article = req.article
+        article.comments.push([req.body.comment, username]);
+        try {
+            article = article.save();
+            res.redirect(`/articles/dashboard`);
+        } catch (e) {
+            console.log("Error al guardar el comentario en artículo.")
+        }
+    } else {
+        res.redirect('/');
+    }
+
+})
+
 // Obtenemos el Articulo a editar
 router.get('/edit/:id', async(req, res)=>{
     const online = storage.getItem('hasSession')
@@ -41,6 +71,7 @@ router.get('/edit/:id', async(req, res)=>{
         res.redirect('/')
     }
 })
+
 
 // Obtener el Articulo x Slug
 router.get('/:slug', async(req, res)=>{
